@@ -121,9 +121,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
         onClick={() => onNavigate(View.Scanner)}
         className="w-full p-8 mb-6 rounded-2xl shadow-xl bg-brand-green-dark text-white flex flex-col items-center justify-center text-center transition-all duration-300 hover:bg-brand-green hover:scale-105 animate-in"
       >
-        <Camera className="w-20 h-20 mb-2" />
+        <Camera className="w-10 h-10 mb-2" />
         <h2 className="text-2xl font-bold mt-2">Scanner la Plante</h2>
-        <p className="mt-2 text-md text-white/80">Diagnostiquer une maladie en une photo.</p>
+        <p className="mt-2 text-md text-white/80">Diagnostiquer la maladie</p>
       </button>
       {/* Boutons secondaires */}
       <div className="grid grid-cols-3 gap-4 mb-6 animate-fade-in">
