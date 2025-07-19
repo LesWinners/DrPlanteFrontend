@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { analyzePlantImage } from '../services/geminiService';
+import { BACKEND_URL } from "../constants";
+import { analyzePlantImage, getChatResponseStream } from '../services/geminiService';
 import Spinner from './Spinner';
 import { CameraIcon, CheckCircleIcon, AlertTriangleIcon, SpeakerOnIcon, SpeakerOffIcon } from '../constants';
 import { PlantScanResult } from '../types';
@@ -49,6 +50,23 @@ const ProgressCircle = ({ progress }: { progress: number }) => {
   );
 };
 
+const saveAnalysis = async (analysisData: any) => {
+  await fetch(`${BACKEND_URL}/analyses`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(analysisData),
+  });
+};
+
+// Quand tu as les résultats du scan :
+const handleScanResult = (result: any) => {
+  // result = { image, plantName, isPlant, diseaseName, confidence, recommendedTreatments }
+  saveAnalysis({
+    ...result,
+    timestamp: new Date(),
+  });
+  // ... le reste du code
+};
 
 const PlantScanner: React.FC = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -58,6 +76,8 @@ const PlantScanner: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputCameraRef = useRef<HTMLInputElement>(null);
   const fileInputGalleryRef = useRef<HTMLInputElement>(null);
+  const [localPartners, setLocalPartners] = useState<string | null>(null);
+  const [loadingPartners, setLoadingPartners] = useState(false);
   
   const textToSpeak = result ? `Analyse terminée. Plante détectée: ${result.plantName}. Diagnostic: ${result.disease}. Le traitement recommandé est le suivant : ${result.treatment.join('. ')}` : '';
   const { isSpeaking, speak, stop } = useTextToSpeech(textToSpeak);
@@ -69,6 +89,79 @@ const PlantScanner: React.FC = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result, isLoading]);
+
+  // Enregistrement automatique du résultat du scan en base de données
+  useEffect(() => {
+    if (result) {
+      saveAnalysis({
+        image: result.imageUrl, // ou result.image selon ta structure
+        plantName: result.plantName,
+        isPlant: true, // adapte si tu as une vraie valeur
+        timestamp: new Date(),
+        diseaseName: result.disease,
+        confidence: result.confidence,
+        recommendedTreatments: Array.isArray(result.treatment) ? result.treatment.join('\n') : result.treatment
+      });
+    }
+  }, [result]);
+  
+  // Générer la recommandation partenaires après analyse
+  useEffect(() => {
+    if (result) {
+      setLoadingPartners(true);
+      // Récupérer la localisation utilisateur
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            fetchLocalPartners(result, `${latitude},${longitude}`);
+          },
+          () => {
+            fetchLocalPartners(result, 'Abidjan');
+          }
+        );
+      } else {
+        fetchLocalPartners(result, 'Abidjan');
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
+
+  const fetchLocalPartners = async (result: PlantScanResult, location: string) => {
+    const prompt = `Tu es un assistant spécialisé dans la recherche de fournisseurs agricoles en Afrique. 
+    
+    L'utilisateur a diagnostiqué la maladie suivante : "${result.disease}" sur la plante "${result.plantName}". 
+    Il est localisé à "${location}" et cherche des fournisseurs fiables pour acheter le traitement approprié.
+    
+    Donne-moi une liste de 3-4 fournisseurs ou points de vente fiables dans cette région. 
+    
+    Pour chaque fournisseur, fournis EXACTEMENT cette structure :
+    
+    Nom du fournisseur: [nom]
+    Produit ou traitement à acheter: [produit spécifique]
+    Adresse ou lieu précis: [adresse complète]
+    Numéro de téléphone: [numéro si disponible]
+    
+    ---
+    
+    Sois précis et réaliste. Si tu ne connais pas de vrais fournisseurs dans cette région, suggère des types de lieux où chercher (coopératives agricoles, magasins de jardinage, etc.) avec des adresses génériques mais plausibles.
+    
+    Réponds uniquement avec la liste des fournisseurs, sans introduction ni conclusion.`;
+    
+    try {
+      let answer = '';
+      const stream = await getChatResponseStream(prompt);
+      for await (const chunk of stream) {
+        answer += chunk.text;
+        setLocalPartners(answer);
+      }
+    } catch (e) {
+      console.error('Erreur lors de la recherche de partenaires:', e);
+      setLocalPartners("Impossible de récupérer les suggestions de partenaires pour le moment. Veuillez réessayer plus tard.");
+    } finally {
+      setLoadingPartners(false);
+    }
+  };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -197,7 +290,7 @@ const PlantScanner: React.FC = () => {
         ) : (
           <div className="text-center text-gray-500">
             <CameraIcon className="w-16 h-16 mx-auto" />
-            <p className="mt-2 font-semibold">Prendre ou importer une photo</p>
+            <p className="mt-2 font-semibold">Votre photo s'affichera ici</p>
           </div>
         )}
       </div>
@@ -209,7 +302,7 @@ const PlantScanner: React.FC = () => {
           disabled={isLoading}
           className="flex-1 bg-brand-green hover:bg-brand-green-dark text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center text-base transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          Prendre une photo
+          Prendre <br /> une photo
         </button>
         <button
           type="button"
@@ -217,7 +310,7 @@ const PlantScanner: React.FC = () => {
           disabled={isLoading}
           className="flex-1 bg-amber-200 hover:bg-amber-300 text-brand-brown font-bold py-3 rounded-xl shadow-lg flex items-center justify-center text-base transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
-          Choisir dans la galerie
+          Choisir dans <br />  la galerie
         </button>
       </div>
       {/* Bouton analyse */}
@@ -258,6 +351,65 @@ const PlantScanner: React.FC = () => {
       <AnimatePresence>
         {renderResult()}
       </AnimatePresence>
+      {/* Suggestions partenaires locaux */}
+      {result && (
+        <div className="w-full mt-6 bg-white rounded-2xl shadow-lg p-5">
+          <h3 className="text-lg font-bold text-brand-green-dark mb-4">Où acheter / Partenaires locaux</h3>
+          {loadingPartners ? (
+            <div className="text-sm text-gray-500 animate-pulse">Recherche de partenaires locaux...</div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {localPartners && localPartners.split(/Nom du fournisseur:/i).filter(Boolean).map((block, idx) => {
+                // Parser chaque bloc pour extraire les champs de manière plus robuste
+                const lines = block.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                
+                let nom = '';
+                let produit = '';
+                let adresse = '';
+                let tel = '';
+                
+                for (const line of lines) {
+                  if (line.startsWith('Nom du fournisseur:')) {
+                    nom = line.replace('Nom du fournisseur:', '').trim();
+                  } else if (line.startsWith('Produit ou traitement à acheter:')) {
+                    produit = line.replace('Produit ou traitement à acheter:', '').trim();
+                  } else if (line.startsWith('Adresse ou lieu précis:')) {
+                    adresse = line.replace('Adresse ou lieu précis:', '').trim();
+                  } else if (line.startsWith('Numéro de téléphone:')) {
+                    tel = line.replace('Numéro de téléphone:', '').trim();
+                  } else if (!nom && line.length > 0) {
+                    // Si c'est la première ligne et qu'on n'a pas encore de nom, c'est probablement le nom
+                    nom = line;
+                  }
+                }
+                
+                if (!nom) return null;
+                
+                return (
+                  <div key={idx} className="p-4 rounded-2xl bg-green-50 border border-green-200 shadow flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-lg text-brand-green-dark">{nom}</span>
+                      {produit && <span className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-1 rounded ml-2">{produit}</span>}
+                    </div>
+                    {adresse && (
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <span role="img" aria-label="Lieu">📍</span>
+                        <span>{adresse}</span>
+                      </div>
+                    )}
+                    {tel && (
+                      <div className="flex items-center gap-2 text-blue-700">
+                        <span role="img" aria-label="Téléphone">📞</span>
+                        <a href={`tel:${tel.replace(/[^+\d]/g, '')}`} className="underline">{tel}</a>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

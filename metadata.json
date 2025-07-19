@@ -1,6 +1,6 @@
 
 {
-  "name": "DrPlante",
+  "name": "Dr. Plante",
   "description": "Une application web intuitive, mobile d'abord, conçue pour les agriculteurs des zones rurales d'Afrique. Elle propose un diagnostic des maladies des plantes alimenté par l'IA, un chatbot assistant agricole, une base de connaissances et un tableau de bord personnel pour soutenir des pratiques agricoles durables et efficaces.",
   "requestFramePermissions": [
     "camera"

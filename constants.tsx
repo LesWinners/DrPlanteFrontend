@@ -102,8 +102,11 @@ export const dashboardScanData = [
 ];
 
 export const dashboardDiseaseData = [
-    { name: 'Mildiou', value: 40, fill: '#ff6b6b' },
-    { name: 'Rouille', value: 30, fill: '#f06595' },
-    { name: 'Oïdium', value: 20, fill: '#fcc419' },
-    { name: 'Sain', value: 10, fill: '#588157' },
+    { name: 'Mildiou', value: 25, fill: '#7C3E10' },
+    { name: 'Chenilles foreuses (vers de la tomate)', value: 25, fill: '#588157' },
+    { name: 'Dégâts d\'insectes foreurs (chenilles) et pourriture secondaire', value: 25, fill: '#A3B18A' },
+    { name: 'Alternariose (Brulure précoce)', value: 25, fill: '#D4A373' },
 ];
+
+//export const BACKEND_URL = "http://localhost:5000/api";
+export const BACKEND_URL = "https://drplantebackend.onrender.com/api";

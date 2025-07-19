@@ -183,8 +183,12 @@ const AiAssistant: React.FC = () => {
 
   // Suggestions
   const suggestedPrompts = [
+    "Pourquoi mes feuilles de manioc jaunissent-elles ?",
+    "Comment lutter contre les insectes ravageurs sans pesticides ?",
+    "Quelles plantes cultiver en saison sèche ?",
+    "Le cacao de ma plantation noircit, que faire ?",
+    "Mon plant de bananier ne donne pas de fruits, pourquoi ?",
     "Quel est le meilleur moment pour planter du maïs ?",
-    "Comment traiter le mildiou sur les tomates ?",
     "Ma terre est très argileuse, que puis-je cultiver ?"
   ];
 
@@ -234,7 +238,7 @@ const AiAssistant: React.FC = () => {
   // Avatars
   const AvatarAssistant = () => (
     <div className="w-9 h-9 rounded-full flex items-center justify-center shadow">
-        <img src="/logo.png" alt="Logo DrPlante" className="w-8 h-8 rounded-full shadow" />
+        <img src="/logo.png" alt="Logo Docteur Plante" className="w-8 h-8 rounded-full shadow" />
     </div>
   );
   const AvatarUser = () => (
@@ -339,7 +343,7 @@ const AiAssistant: React.FC = () => {
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
-          placeholder={isListening ? "Parlez..." : "Dites-moi ce que vous amène..."}
+          placeholder={isListening ? "Parlez..." : "Echangeons..."}
           className="flex-1 min-w-0 p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-green"
           disabled={isLoading || isListening}
         />

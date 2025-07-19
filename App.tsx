@@ -55,7 +55,7 @@ const App: React.FC = () => {
   const getTitleForView = (view: View): string => {
     switch (view) {
       case View.Home:
-        return "Dr Plante";
+        return "Docteur Plante";
       case View.Scanner:
         return "Scanner une Plante";
       case View.Assistant:
@@ -65,7 +65,7 @@ const App: React.FC = () => {
       case View.Dashboard:
         return "Tableau de Bord";
       default:
-        return "DrPlante";
+        return "Docteur Plante";
     }
   };
 
