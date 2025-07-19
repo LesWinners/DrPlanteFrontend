@@ -56,6 +56,8 @@ const PlantScanner: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputCameraRef = useRef<HTMLInputElement>(null);
+  const fileInputGalleryRef = useRef<HTMLInputElement>(null);
   
   const textToSpeak = result ? `Analyse terminée. Plante détectée: ${result.plantName}. Diagnostic: ${result.disease}. Le traitement recommandé est le suivant: ${result.treatment.join('. ')}` : '';
   const { isSpeaking, speak, stop } = useTextToSpeech(textToSpeak);
@@ -88,6 +90,15 @@ const PlantScanner: React.FC = () => {
     fileInputRef.current?.click();
   };
   
+  const triggerCameraInput = () => {
+    if (isSpeaking) stop();
+    fileInputCameraRef.current?.click();
+  };
+  const triggerGalleryInput = () => {
+    if (isSpeaking) stop();
+    fileInputGalleryRef.current?.click();
+  };
+
   const handleAnalyze = useCallback(async (base64Image: string) => {
     if (!base64Image) return;
 
@@ -163,15 +174,23 @@ const PlantScanner: React.FC = () => {
 
   return (
     <div className="p-4 flex flex-col items-center">
+      {/* Inputs cachés */}
       <input
         type="file"
         accept="image/*"
         capture="environment"
-        ref={fileInputRef}
+        ref={fileInputCameraRef}
         onChange={handleImageChange}
         className="hidden"
       />
-      
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputGalleryRef}
+        onChange={handleImageChange}
+        className="hidden"
+      />
+      {/* Zone d'aperçu */}
       <div className="relative w-full h-64 bg-gray-200 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-400 mb-6">
         {image ? (
           <img src={image} alt="Aperçu de la plante" className="object-cover h-full w-full" />
@@ -182,15 +201,34 @@ const PlantScanner: React.FC = () => {
           </div>
         )}
       </div>
-
+      {/* Boutons choix */}
+      <div className="flex w-full gap-3 mb-4">
+        <button
+          type="button"
+          onClick={triggerCameraInput}
+          disabled={isLoading}
+          className="flex-1 bg-brand-green hover:bg-brand-green-dark text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center text-base transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          Prendre une photo
+        </button>
+        <button
+          type="button"
+          onClick={triggerGalleryInput}
+          disabled={isLoading}
+          className="flex-1 bg-amber-200 hover:bg-amber-300 text-brand-brown font-bold py-3 rounded-xl shadow-lg flex items-center justify-center text-base transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
+          Choisir dans la galerie
+        </button>
+      </div>
+      {/* Bouton analyse */}
       <motion.button
-        onClick={triggerFileInput}
-        disabled={isLoading}
+        onClick={image ? () => handleAnalyze(image) : undefined}
+        disabled={isLoading || !image}
         className="w-full bg-brand-green hover:bg-brand-green-dark text-white font-bold py-4 px-4 rounded-xl shadow-lg flex items-center justify-center text-lg transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.98 }}
       >
-        {isLoading ? <Spinner /> : 'Lancer une nouvelle analyse'}
+        {isLoading ? <Spinner /> : 'Lancer l\'analyse'}
       </motion.button>
 
       <AnimatePresence>
