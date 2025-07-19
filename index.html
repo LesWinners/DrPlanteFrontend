@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DrPlante</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-green-light': '#A3B18A',
+              'brand-green': '#588157',
+              'brand-green-dark': '#3A5A40',
+              'brand-beige': '#FDF8E1',
+              'brand-brown': '#582F0E',
+            }
+          }
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+    <style>
+      body {
+        overscroll-behavior-y: contain;
+      }
+       .progress-ring__circle {
+        transition: stroke-dashoffset 0.5s;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.10.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "recharts": "https://esm.sh/recharts@^3.1.0",
+    "framer-motion": "https://esm.sh/framer-motion@^11.3.12"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-brand-beige">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
