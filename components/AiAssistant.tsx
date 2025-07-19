@@ -233,8 +233,8 @@ const AiAssistant: React.FC = () => {
 
   // Avatars
   const AvatarAssistant = () => (
-    <div className="w-9 h-9 rounded-full bg-brand-green flex items-center justify-center shadow">
-      <Bot className="w-6 h-6 text-white" />
+    <div className="w-9 h-9 rounded-full flex items-center justify-center shadow">
+        <img src="/logo.png" alt="Logo DrPlante" className="w-8 h-8 rounded-full shadow" />
     </div>
   );
   const AvatarUser = () => (
@@ -309,7 +309,7 @@ const AiAssistant: React.FC = () => {
       )}
       {/* Barre d’envoi fixée en bas */}
       <form
-        className="bg-white p-3 flex items-center gap-2 border-t shadow z-10"
+        className="w-full max-w-full bg-white p-3 flex items-center gap-2 border-t shadow z-10 overflow-hidden"
         onSubmit={e => {
           e.preventDefault();
           handleSend(undefined, image);
@@ -340,7 +340,7 @@ const AiAssistant: React.FC = () => {
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder={isListening ? "Parlez..." : "Dites-moi ce que vous amène..."}
-          className="flex-1 p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-green"
+          className="flex-1 min-w-0 p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-green"
           disabled={isLoading || isListening}
         />
         {/* Bouton micro */}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from '../types';
 import {
   Camera,
@@ -33,6 +33,24 @@ const scanHistory = [
   { id: 3, plant: 'Pomme de terre', disease: 'Mildiou', date: '2024-01-13', confidence: 92 },
   { id: 4, plant: 'Haricot', disease: 'Rouille', date: '2024-01-12', confidence: 89 },
 ];
+
+const WeatherStat = () => {
+  const [weather, setWeather] = useState<any>(null);
+  useEffect(() => {
+    fetch('https://api.weatherapi.com/v1/current.json?key=dc7e1a9793a249389c5151834251907&q=Abidjan&lang=fr')
+      .then(res => res.json())
+      .then(data => setWeather(data));
+  }, []);
+  if (!weather) return <div className="text-xs text-gray-400">Chargement météo...</div>;
+  return (
+    <div className="flex flex-col items-center">
+      <img src={weather.current.condition.icon} alt={weather.current.condition.text} className="w-10 h-10 mb-1" />
+      <span className="text-2xl font-bold text-brand-green-dark">{weather.current.temp_c}°C</span>
+      <div className="text-base font-medium text-gray-700 mb-1">Météo</div>
+      <div className="text-xs text-gray-500">{weather.current.condition.text}, {weather.current.humidity}% humidité</div>
+    </div>
+  );
+};
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -98,15 +116,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
             <div className="text-base font-medium text-gray-700 mb-1">Analyses</div>
             <div className="text-xs text-gray-500">Total réalisées</div>
           </div>
-          {/* Météo */}
-          <div className="flex flex-col items-center justify-between bg-yellow-50 rounded-xl py-6">
-            <div className="flex flex-col items-center mb-2">
-              <CloudSun className="w-8 h-8 text-yellow-600 mb-1" />
-              <span className="text-2xl font-bold text-yellow-600">{stats.weather.temperature}°C</span>
-            </div>
-            <div className="text-base font-medium text-gray-700 mb-1">Météo</div>
-            <div className="text-xs text-gray-500">{stats.weather.humidity}% humidité</div>
-            <div className="text-xs text-gray-500">{stats.weather.condition}</div>
+          {/* Météo Abidjan */}
+          <div className="flex flex-col items-center justify-between bg-blue-50 rounded-xl py-6">
+            <WeatherStat />
           </div>
         </div>
       </div>

@@ -59,7 +59,7 @@ const PlantScanner: React.FC = () => {
   const fileInputCameraRef = useRef<HTMLInputElement>(null);
   const fileInputGalleryRef = useRef<HTMLInputElement>(null);
   
-  const textToSpeak = result ? `Analyse terminée. Plante détectée: ${result.plantName}. Diagnostic: ${result.disease}. Le traitement recommandé est le suivant: ${result.treatment.join('. ')}` : '';
+  const textToSpeak = result ? `Analyse terminée. Plante détectée: ${result.plantName}. Diagnostic: ${result.disease}. Le traitement recommandé est le suivant : ${result.treatment.join('. ')}` : '';
   const { isSpeaking, speak, stop } = useTextToSpeech(textToSpeak);
 
   useEffect(() => {
@@ -159,7 +159,7 @@ const PlantScanner: React.FC = () => {
             </div>
 
             <div>
-              <h4 className="font-bold text-lg text-brand-brown mb-2">Traitement Recommandé:</h4>
+              <h4 className="font-bold text-lg text-brand-brown mb-2">Recommandation :</h4>
               <ul className="space-y-2 text-gray-700 list-disc list-inside">
                 {result.treatment.map((step, index) => (
                     <li key={index}>{step}</li>
