@@ -36,18 +36,42 @@ const scanHistory = [
 
 const WeatherStat = () => {
   const [weather, setWeather] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    fetch('https://api.weatherapi.com/v1/current.json?key=dc7e1a9793a249389c5151834251907&q=Abidjan&lang=fr')
-      .then(res => res.json())
-      .then(data => setWeather(data));
+    if (!navigator.geolocation) {
+      fetchWeather('Abidjan');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        fetchWeather(`${latitude},${longitude}`);
+      },
+      (err) => {
+        // Si refus ou erreur, fallback sur Abidjan
+        fetchWeather('Abidjan');
+      }
+    );
   }, []);
-  if (!weather) return <div className="text-xs text-gray-400">Chargement météo...</div>;
+
+  const fetchWeather = (q: string) => {
+    fetch(`https://api.weatherapi.com/v1/current.json?key=dc7e1a9793a249389c5151834251907&q=${q}&lang=fr`)
+      .then(res => res.json())
+      .then(data => {
+        setWeather(data);
+        setLoading(false);
+      });
+  };
+
+  if (loading) return <div className="text-xs text-gray-400">Chargement météo...</div>;
+  if (!weather) return <div className="text-xs text-red-500">Erreur météo</div>;
   return (
     <div className="flex flex-col items-center">
       <img src={weather.current.condition.icon} alt={weather.current.condition.text} className="w-10 h-10 mb-1" />
       <span className="text-2xl font-bold text-brand-green-dark">{weather.current.temp_c}°C</span>
       <div className="text-base font-medium text-gray-700 mb-1">Météo</div>
-      <div className="text-xs text-gray-500">{weather.current.condition.text}, {weather.current.humidity}% humidité</div>
+      <div className="text-xs text-gray-500">{weather.location.name} — {weather.current.condition.text}, {weather.current.humidity}% humidité</div>
     </div>
   );
 };
