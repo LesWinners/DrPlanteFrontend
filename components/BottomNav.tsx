@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from '../types';
 import { navigationItems, CameraIcon } from '../constants';
+import { MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface BottomNavProps {
@@ -8,8 +9,14 @@ interface BottomNavProps {
   onNavigate: (view: View) => void;
 }
 
+const customNavigationItems = navigationItems.map(item =>
+  item.view === View.Assistant
+    ? { ...item, icon: MessageCircle }
+    : item
+);
+
 const BottomNav: React.FC<BottomNavProps> = ({ currentView, onNavigate }) => {
-  const standardNavItems = navigationItems.filter(item => item.view !== View.Scanner);
+  const standardNavItems = customNavigationItems.filter(item => item.view !== View.Scanner);
   const leftItems = standardNavItems.slice(0, 2);
   const rightItems = standardNavItems.slice(2);
 

@@ -8,7 +8,7 @@ import {
   CloudSun,
   Droplets,
   Thermometer,
-  History
+  Search
 } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import clsx from 'clsx';
@@ -62,7 +62,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
           )}
         >
           <MessageCircle className="w-10 h-10 mb-2 text-amber-800" />
-          <span className="text-sm font-bold text-amber-800">Assistant IA</span>
+          <span className="text-sm font-bold text-amber-800">Mon Conseiller</span>
         </button>
         <button
           onClick={() => onNavigate(View.Knowledge)}
@@ -72,7 +72,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
           )}
         >
           <BookOpen className="w-10 h-10 mb-2 text-sky-800" />
-          <span className="text-sm font-bold text-sky-800">Savoir</span>
+          <span className="text-sm font-bold text-sky-800">Apprendre</span>
         </button>
         <button
           onClick={() => onNavigate(View.Dashboard)}
@@ -92,7 +92,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
           {/* Analyses */}
           <div className="flex flex-col items-center justify-between bg-green-50 rounded-xl py-6">
             <div className="flex flex-col items-center mb-2">
-              <History className="w-8 h-8 text-brand-green-dark mb-1" />
+              <Search className="w-8 h-8 text-brand-green-dark mb-1" />
               <span className="text-2xl font-bold text-brand-green-dark">{stats.totalAnalyses}</span>
             </div>
             <div className="text-base font-medium text-gray-700 mb-1">Analyses</div>

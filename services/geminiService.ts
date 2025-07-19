@@ -29,6 +29,19 @@ export const getChatResponseStream = async (message: string) => {
     return result;
 };
 
+export const getChatResponseStreamWithImage = async (message: string, base64Image: string) => {
+    const currentChat = getChat();
+    const imagePart = {
+        inlineData: {
+            mimeType: 'image/jpeg',
+            data: base64Image,
+        },
+    };
+    const textPart = { text: message };
+    const result = await currentChat.sendMessageStream({ parts: [imagePart, textPart] });
+    return result;
+};
+
 export const analyzePlantImage = async (base64Image: string): Promise<any> => {
     const imagePart = {
         inlineData: {

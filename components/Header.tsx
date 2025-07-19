@@ -12,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({ title, isOffline, onToggleOffline }) =>
   return (
     <header className="bg-white p-4 flex justify-between items-center sticky top-0 z-10 border-b border-gray-200">
       <div className="flex items-center space-x-3">
-        <LeafIcon className="w-7 h-7 text-brand-green"/>
+        <img src="/logo.png" alt="Logo DrPlante" className="w-8 h-8 rounded-full shadow" />
         <h1 className="text-xl font-bold text-brand-green-dark">{title}</h1>
       </div>
       <motion.button 

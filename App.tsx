@@ -1,4 +1,5 @@
 import React from 'react';
+import TTSTest from "./components/TTSTest";
 import { useState, useCallback } from 'react';
 import { View } from './types';
 import BottomNav from './components/BottomNav';
@@ -54,11 +55,11 @@ const App: React.FC = () => {
   const getTitleForView = (view: View): string => {
     switch (view) {
       case View.Home:
-        return "Accueil";
+        return "Dr Plante";
       case View.Scanner:
         return "Scanner une Plante";
       case View.Assistant:
-        return "Assistant Agricole";
+        return "Mon Conseiller";
       case View.Knowledge:
         return "Base de Connaissances";
       case View.Dashboard:
