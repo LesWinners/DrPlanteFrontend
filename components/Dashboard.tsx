@@ -135,6 +135,8 @@ const Dashboard: React.FC = () => {
     
   }
 
+  const pieData = Array.isArray(diseaseData) && diseaseData.length > 0 ? diseaseData : (Array.isArray(dashboardDiseaseData) ? dashboardDiseaseData : []);
+
   return (
     <div className="p-4 space-y-6">
        <motion.div 
@@ -170,7 +172,7 @@ const Dashboard: React.FC = () => {
             <ResponsiveContainer>
                  <PieChart>
                     <Pie 
-                        data={diseaseData.length > 0 ? diseaseData : dashboardDiseaseData} 
+                        data={pieData} 
                         dataKey="value" 
                         nameKey="name" 
                         cx="50%" 
@@ -205,7 +207,7 @@ const Dashboard: React.FC = () => {
                             return null;
                         }}
                     >
-                         {(diseaseData.length > 0 ? diseaseData : dashboardDiseaseData).map((entry, index) => (
+                         {pieData.map((entry, index) => (
                             <Cell 
                                 key={`cell-${index}`} 
                                 fill={entry.fill} 
