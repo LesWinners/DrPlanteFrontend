@@ -50,23 +50,34 @@ const Dashboard: React.FC = () => {
       diseaseCounts[disease] = (diseaseCounts[disease] || 0) + 1;
     });
 
+    // Trie les maladies par nombre d'occurrences décroissant
+    const sortedDiseases = Object.entries(diseaseCounts).sort((a, b) => b[1] - a[1]);
+    const top5 = sortedDiseases.slice(0, 5);
+    const autres = sortedDiseases.slice(5);
+    let autresTotal = 0;
+    autres.forEach(([_, value]) => { autresTotal += value; });
+
     const colors = [
       '#7C3E10', // Terre argileuse
       '#D4A373', // Sable chaud
       '#A3B18A', // Feuillage clair
       '#588157', // Vert forêt (conservé)
       '#F4A261', // Soleil couchant / patate douce
-      '#2A9D8F', // Feuillage tropical
-      '#E9C46A', // Millet / Savane dorée
-      '#264653', // Bleu nuit africain
       '#B5838D', // Terres ferrugineuses / fleurs
-      '#6A994E'  // Végétation dense
     ];
-    const diseaseChartData = Object.entries(diseaseCounts).map(([name, value], index) => ({
+
+    const diseaseChartData = top5.map(([name, value], index) => ({
       name,
       value,
       fill: colors[index % colors.length]
     }));
+    if (autresTotal > 0) {
+      diseaseChartData.push({
+        name: 'Autres',
+        value: autresTotal,
+        fill: '#E9C46A'
+      });
+    }
 
     setScanData(scanChartData);
     setDiseaseData(diseaseChartData);
@@ -154,7 +165,7 @@ const Dashboard: React.FC = () => {
         viewport={{ once: true, amount: 0.8 }}
         variants={cardVariants}
        >
-        <h3 className="text-lg font-bold text-brand-green-dark mb-6">Types de Maladies Détectées</h3>
+        <h3 className="text-lg font-bold text-brand-green-dark mb-6">Résultats obtenus</h3>
         <div style={{ width: '100%', height: 400, padding: '10px 0' }}>
             <ResponsiveContainer>
                  <PieChart>
