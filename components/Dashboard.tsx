@@ -63,7 +63,7 @@ const Dashboard: React.FC = () => {
       '#A3B18A', // Feuillage clair
       '#588157', // Vert forêt (conservé)
       '#F4A261', // Soleil couchant / patate douce
-      '#B5838D', // Terres ferrugineuses / fleurs
+      '#B5838D', // Terres ferrugineuses 
     ];
 
     const diseaseChartData = top5.map(([name, value], index) => ({
